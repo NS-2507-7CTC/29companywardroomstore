@@ -4,8 +4,8 @@
 // ============================================================
 
 // --- CONFIGURATION — edit these ---
-const SHEET_NAME = "Orders";
-const VENMO_HANDLE = "@29CompWardroom";
+const SHEET_NAME = "29th Company Wardroom Store";
+const VENMO_HANDLE = "@Nicolas-Simmons-2";
 
 // Item catalog: key -> { name, price, category }
 const CATALOG = {
