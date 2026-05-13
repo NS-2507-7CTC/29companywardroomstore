@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>29th Company Wardroom Store</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --navy:    #0f1e3c;
+    --navy2:   #1a2f57;
+    --gold:    #c9a84c;
+    --gold2:   #e8c97a;
+    --bg:      #f5f4f0;
+    --surface: #ffffff;
+    --border:  #e2e0d8;
+    --muted:   #7a7870;
+    --text:    #1a1917;
+    --success: #1a7a4a;
+    --success-bg: #eaf6ef;
+    --danger:  #b83232;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 0 4rem;
+  }
+
+  /* ── Header ── */
+  .header {
+    width: 100%;
+    background: var(--navy);
+    padding: 1.25rem 1.5rem 1rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .header h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: .02em;
+    margin-bottom: 3px;
+  }
+  .header p {
+    font-size: 12px;
+    color: rgba(255,255,255,.5);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: .04em;
+  }
+
+  /* ── Card ── */
+  .card {
+    width: 100%;
+    max-width: 480px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-top: 1rem;
+  }
+
+  /* ── Alpha input ── */
+  .field-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .field-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  input[type="text"], textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--surface);
+    transition: border-color .15s;
+    appearance: none;
+  }
+  input[type="text"]:focus, textarea:focus {
+    outline: none;
+    border-color: var(--navy2);
+  }
+  textarea { resize: none; height: 60px; font-size: 13px; }
+
+  /* ── Section heading ── */
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin: 1.25rem 0 .75rem;
+  }
+  .section-head::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── Category label ── */
+  .cat-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin: .75rem 0 .4rem;
+  }
+
+  /* ── Item rows ── */
+  .item-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 6px;
+    transition: border-color .15s, background .15s;
+    background: var(--surface);
+  }
+  .item-row.active {
+    border-color: var(--navy2);
+    background: #f0f3f9;
+  }
+  .item-info .iname {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .item-info .iprice {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-top: 1px;
+  }
+  .qty-ctrl {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .qbtn {
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+    font-size: 16px;
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .12s, border-color .12s;
+    line-height: 1;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .qbtn:hover { background: var(--bg); border-color: var(--navy2); }
+  .qbtn:active { transform: scale(.94); }
+  .qnum {
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'DM Mono', monospace;
+    min-width: 20px;
+    text-align: center;
+    color: var(--text);
+  }
+
+  /* ── Cart summary ── */
+  .cart {
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 1rem;
+  }
+  .cart-empty {
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+    padding: 4px 0;
+  }
+  .cart-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .cart-line span:last-child {
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .cart-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 8px 0;
+  }
+  .cart-total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .cart-total span:last-child {
+    font-family: 'DM Mono', monospace;
+    color: var(--navy);
+  }
+
+  /* ── Venmo hint ── */
+  .venmo-hint {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    background: var(--success-bg);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-top: 1rem;
+    font-size: 12px;
+    color: var(--success);
+    line-height: 1.5;
+  }
+  .venmo-hint .icon { font-size: 15px; margin-top: 1px; flex-shrink: 0; }
+
+  /* ── Submit button ── */
+  .submit-btn {
+    width: 100%;
+    padding: 13px;
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1rem;
+    letter-spacing: .02em;
+    transition: background .15s, opacity .15s, transform .1s;
+    position: relative;
+    overflow: hidden;
+  }
+  .submit-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transition: transform .2s;
+  }
+  .submit-btn:not(:disabled):hover { background: var(--navy2); }
+  .submit-btn:not(:disabled):hover::after { transform: scaleX(1); }
+  .submit-btn:active { transform: scale(.98); }
+  .submit-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+  /* ── Spinner ── */
+  .spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Error message ── */
+  .error-msg {
+    font-size: 13px;
+    color: var(--danger);
+    background: #fdeaea;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-top: .75rem;
+    display: none;
+  }
+
+  /* ── Confirmation screen ── */
+  #conf-view { display: none; }
+  .conf-icon {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--success-bg);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 26px;
+    color: var(--success);
+  }
+  .conf-title {
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .conf-sub {
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+    margin-bottom: 1.25rem;
+  }
+  .pay-box {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .pay-box .plbl {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .pay-box .pval {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .pay-box .phandle {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+  .pay-box .pamount {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--navy);
+    font-family: 'DM Mono', monospace;
+  }
+  .note-box {
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 1rem;
+  }
+  .note-box .nlbl {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .note-box .nval {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    word-break: break-word;
+    line-height: 1.5;
+  }
+  .copy-btn {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    margin-bottom: .75rem;
+    transition: background .12s;
+  }
+  .copy-btn:hover { background: var(--bg); }
+  .items-receipt {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+
+  /* ── Loading overlay ── */
+  #loading-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,.7);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 14px;
+    color: var(--navy);
+    font-weight: 500;
+  }
+  #loading-overlay.show { display: flex; }
+  .big-spinner {
+    width: 36px; height: 36px;
+    border: 3px solid rgba(15,30,60,.15);
+    border-top-color: var(--navy);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+  }
+</style>
+</head>
+<body>
+
+<div id="loading-overlay">
+  <div class="big-spinner"></div>
+  <span>Logging your order...</span>
+</div>
+
+<div class="header">
+  <h1>29th Company Wardroom Store</h1>
+  <p>Honor system &mdash; log your order &mdash; pay via Venmo</p>
+</div>
+
+<!-- ── ORDER FORM ── -->
+<div id="form-view">
+
+  <div class="card">
+    <label class="field-label">Your alpha / name <span style="color:var(--danger)">*</span></label>
+    <p class="field-sub">e.g. 3/C Smith &mdash; used to match your Venmo payment</p>
+    <input type="text" id="alpha" placeholder="Enter alpha or name" oninput="onAlpha()" autocomplete="off"/>
+  </div>
+
+  <div id="items-section" class="card" style="opacity:.38;pointer-events:none;transition:opacity .2s;">
+    <div class="section-head">Select items</div>
+
+    <div id="items-list">
+      <!-- Rendered by JS from catalog -->
+    </div>
+
+    <div class="section-head" style="margin-top:1.25rem;">Order summary</div>
+    <div class="cart" id="cart-box">
+      <p class="cart-empty" id="cart-empty">No items selected yet</p>
+      <div id="cart-lines"></div>
+      <hr class="cart-divider" id="cart-divider" style="display:none"/>
+      <div class="cart-total" id="cart-total" style="display:none">
+        <span>Total due</span>
+        <span id="cart-total-val">$0.00</span>
+      </div>
+    </div>
+
+    <div class="venmo-hint">
+      <span class="icon">&#10003;</span>
+      <span>After submitting you'll see the exact Venmo amount and a pre-filled note to paste. Pay immediately to keep the honor system running.</span>
+    </div>
+
+    <div class="card" style="margin-top:1rem;padding:.85rem 1rem;border:1px solid var(--border);">
+      <label class="field-label" style="margin-bottom:6px;">Note (optional)</label>
+      <textarea id="notes" placeholder="Item out of stock, took a substitute, etc."></textarea>
+    </div>
+
+    <div class="error-msg" id="error-msg">Something went wrong. Please try again or contact your Supply Officer.</div>
+
+    <button class="submit-btn" id="submit-btn" disabled onclick="submitOrder()">
+      Log order &amp; get Venmo details
+    </button>
+  </div>
+
+</div>
+
+<!-- ── CONFIRMATION ── -->
+<div id="conf-view">
+  <div class="card" style="text-align:left;">
+    <div class="conf-icon">&#10003;</div>
+    <p class="conf-title">Order logged!</p>
+    <p class="conf-sub">Send your Venmo payment now to complete the purchase.</p>
+
+    <div class="pay-box">
+      <p class="plbl">Venmo handle</p>
+      <p class="phandle" id="conf-handle">@29CompWardroom</p>
+    </div>
+
+    <div class="pay-box">
+      <p class="plbl">Amount to send</p>
+      <p class="pamount" id="conf-total">$0.00</p>
+      <p class="items-receipt" id="conf-items"></p>
+    </div>
+
+    <div class="note-box">
+      <p class="nlbl">Paste this as your Venmo note</p>
+      <p class="nval" id="conf-note-val">—</p>
+    </div>
+
+    <button class="copy-btn" onclick="copyNote()">&#128203; Copy Venmo note</button>
+    <button class="submit-btn" onclick="resetForm()">Done &mdash; new order</button>
+  </div>
+</div>
+
+<script>
+// ── Catalog: loaded from server, fallback for preview ──
+let catalog = {
+  wb: { name: "Water bottle",   price: 1.00, category: "Drinks"          },
+  gt: { name: "Gatorade",       price: 1.75, category: "Drinks"          },
+  ed: { name: "Energy drink",   price: 2.00, category: "Drinks"          },
+  ch: { name: "Chips",          price: 1.50, category: "Snacks"          },
+  cb: { name: "Candy bar",      price: 1.25, category: "Snacks"          },
+  rm: { name: "Ramen cup",      price: 1.00, category: "Snacks"          },
+  ic: { name: "Ice cream cup",  price: 1.25, category: "Frozen"          },
+  pp: { name: "Printer paper",  price: 0.10, category: "School supplies" },
+};
+let qtys = {};
+let venmoHandle = "@29CompWardroom";
+
+// ── Build item UI from catalog ──
+function buildItemList() {
+  const cats = {};
+  for (const [key, item] of Object.entries(catalog)) {
+    qtys[key] = 0;
+    if (!cats[item.category]) cats[item.category] = [];
+    cats[item.category].push({ key, ...item });
+  }
+  const container = document.getElementById('items-list');
+  let html = '';
+  for (const [cat, items] of Object.entries(cats)) {
+    html += `<p class="cat-label">${cat}</p>`;
+    items.forEach(item => {
+      html += `
+        <div class="item-row" id="row-${item.key}">
+          <div class="item-info">
+            <p class="iname">${item.name}</p>
+            <p class="iprice">$${item.price.toFixed(2)}${item.key === 'pp' ? ' / sheet' : ''}</p>
+          </div>
+          <div class="qty-ctrl">
+            <button class="qbtn" onclick="adj('${item.key}',-1)" aria-label="Decrease">&#8722;</button>
+            <span class="qnum" id="n-${item.key}">0</span>
+            <button class="qbtn" onclick="adj('${item.key}',1)" aria-label="Increase">&#43;</button>
+          </div>
+        </div>`;
+    });
+  }
+  container.innerHTML = html;
+}
+
+function adj(key, d) {
+  qtys[key] = Math.max(0, Math.min(20, (qtys[key] || 0) + d));
+  document.getElementById('n-' + key).textContent = qtys[key];
+  document.getElementById('row-' + key).classList.toggle('active', qtys[key] > 0);
+  renderCart();
+}
+
+function renderCart() {
+  const linesEl   = document.getElementById('cart-lines');
+  const emptyEl   = document.getElementById('cart-empty');
+  const divEl     = document.getElementById('cart-divider');
+  const totalEl   = document.getElementById('cart-total');
+  const totalVal  = document.getElementById('cart-total-val');
+  const submitBtn = document.getElementById('submit-btn');
+  const alpha     = document.getElementById('alpha').value.trim();
+
+  let html = '', total = 0, hasItems = false;
+  for (const [k, q] of Object.entries(qtys)) {
+    if (q > 0 && catalog[k]) {
+      const sub = catalog[k].price * q;
+      total += sub;
+      hasItems = true;
+      html += `<div class="cart-line"><span>${catalog[k].name} &times;${q}</span><span>$${sub.toFixed(2)}</span></div>`;
+    }
+  }
+  linesEl.innerHTML = html;
+  emptyEl.style.display  = hasItems ? 'none'  : 'block';
+  divEl.style.display    = hasItems ? 'block' : 'none';
+  totalEl.style.display  = hasItems ? 'flex'  : 'none';
+  totalVal.textContent   = '$' + total.toFixed(2);
+  submitBtn.disabled     = !(hasItems && alpha.length > 1);
+}
+
+function onAlpha() {
+  const sec = document.getElementById('items-section');
+  const val = document.getElementById('alpha').value.trim();
+  sec.style.opacity       = val.length > 1 ? '1'    : '.38';
+  sec.style.pointerEvents = val.length > 1 ? 'auto' : 'none';
+  renderCart();
+}
+
+function submitOrder() {
+  const alpha = document.getElementById('alpha').value.trim();
+  const notes = document.getElementById('notes').value.trim();
+  const cart  = {};
+  let hasItems = false;
+  for (const [k, q] of Object.entries(qtys)) {
+    if (q > 0) { cart[k] = q; hasItems = true; }
+  }
+  if (!alpha || !hasItems) return;
+
+  document.getElementById('loading-overlay').classList.add('show');
+  document.getElementById('error-msg').style.display = 'none';
+
+  google.script.run
+    .withSuccessHandler(onSuccess)
+    .withFailureHandler(onFailure)
+    .submitOrder({ alpha, cart, notes });
+}
+
+function onSuccess(result) {
+  document.getElementById('loading-overlay').classList.remove('show');
+  document.getElementById('conf-handle').textContent = result.venmoHandle || venmoHandle;
+  document.getElementById('conf-total').textContent  = '$' + result.total;
+  document.getElementById('conf-items').textContent  = result.items;
+  document.getElementById('conf-note-val').textContent = result.venmoNote;
+  document.getElementById('form-view').style.display = 'none';
+  document.getElementById('conf-view').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+function onFailure(err) {
+  document.getElementById('loading-overlay').classList.remove('show');
+  const errEl = document.getElementById('error-msg');
+  errEl.style.display = 'block';
+  errEl.textContent   = 'Error: ' + (err.message || 'Unknown error. Try again.');
+}
+
+function copyNote() {
+  const note = document.getElementById('conf-note-val').textContent;
+  navigator.clipboard.writeText(note).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '&#10003; Copied!';
+    setTimeout(() => { btn.innerHTML = '&#128203; Copy Venmo note'; }, 2000);
+  });
+}
+
+function resetForm() {
+  document.getElementById('alpha').value = '';
+  document.getElementById('notes').value = '';
+  for (const k in qtys) {
+    qtys[k] = 0;
+    const n = document.getElementById('n-' + k);
+    if (n) n.textContent = '0';
+    const r = document.getElementById('row-' + k);
+    if (r) r.classList.remove('active');
+  }
+  document.getElementById('items-section').style.opacity = '.38';
+  document.getElementById('items-section').style.pointerEvents = 'none';
+  document.getElementById('form-view').style.display = 'block';
+  document.getElementById('conf-view').style.display = 'none';
+  renderCart();
+  window.scrollTo(0, 0);
+}
+
+// ── Load catalog from server on init ──
+try {
+  google.script.run
+    .withSuccessHandler(function(serverCatalog) {
+      if (serverCatalog) { catalog = serverCatalog; }
+      buildItemList();
+    })
+    .withFailureHandler(function() { buildItemList(); })
+    .getCatalog();
+} catch(e) {
+  buildItemList();
+}
+</script>
+</body>
+</html>
